@@ -1,0 +1,155 @@
+import React, { Component } from 'react';
+import axios from 'axios';
+import { View, Text, Image, Button, ScrollView, RefreshControl, TouchableOpacity, TouchableWithoutFeedback, StyleSheet, FlatList, LogBox, Alert } from 'react-native';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+
+class Home_Page extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            refresh: false,
+            personnya: [],
+            onRefresh: () => {
+                this.setState({
+                    refresh: true
+                })
+                setTimeout(() => {
+                    this.setState({
+                        refresh: false
+                    })
+                }, 2000)
+            },
+            listDivision: [
+                {
+                    key: '1',
+                    name: 'Counter Strike: Global Offensive',
+                    genre: 'First-Person Shooter',
+                    image: 'https://download.logo.wine/logo/Counter-Strike%3A_Global_Offensive/Counter-Strike%3A_Global_Offensive-Logo.wine.png'
+                },
+                {
+                    key: '2',
+                    name: 'Dota 2',
+                    genre: 'Multiplayer Online Battle Arena',
+                    image: 'https://logos-world.net/wp-content/uploads/2020/12/Dota-2-Logo.png'
+                },
+                {
+                    key: '3',
+                    name: 'Garena Free Fire',
+                    genre: 'Battle Royale',
+                    image: 'https://brandlogos.net/wp-content/uploads/2020/09/free-fire-logo-512x512.png'
+                },
+            ],
+        }
+    }
+
+    componentDidMount() {
+        // axios.get(`https://jsonplaceholder.typicode.com/users`)
+        //     .then(res => {
+        //         const personnya = res.data;
+        //         this.setState({ personnya });
+        //     })
+        LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
+    }
+
+    render() {
+        return (
+            <ScrollView contentContainerStyle={style.container} refreshControl={<RefreshControl refreshing={this.state.refresh} onRefresh={this.state.onRefresh} />}>
+                {/* {this.state.personnya.map(personnya => <Text>{personnya.name}</Text>)} */}
+                <View style={style.section}>
+                    <View style={style.sectionHeader}>
+                        <View style={style.sectionSubHeader}>
+                            <FontAwesome5 name={'info-circle'} brand size={15} color={'#007bff'} />
+                            <Text style={style.sectionTitle}> Division</Text>
+                        </View>
+                        <FontAwesome5 name={'plus'} brand size={15} color={'#007bff'} />
+                    </View>
+                    <FlatList
+                        keyExtractor={(item, index) => index.toString()}
+                        data={this.state.listDivision}
+                        renderItem={({ item }) => (
+                            <TouchableWithoutFeedback onPress={() => this.props.navigation.navigate('Home', {
+                                screen: 'Info_Division',
+                                params: {
+                                    division_id: item.key
+                                }
+                            })}>
+                                <View style={style.sectionDivision}>
+                                    <Image resizeMode="contain" source={{ uri: item.image }} style={style.sectionDivisionImage} />
+                                    <View style={{ flex: 7 }}>
+                                        <Text style={style.sectionDivisionTitle}>{item.name}</Text>
+                                        <Text style={style.sectionDivisionGenre}>{item.genre}</Text>
+                                    </View>
+                                    <TouchableOpacity style={style.sectionDivisionButton} onPress={() => this.props.navigation.navigate('Home', {
+                                        screen: 'Info_Division',
+                                        params: {
+                                            division_id: item.key
+                                        }
+                                    })}>
+                                        <Text style={{ fontFamily: 'Quicksand-Bold' }}>View</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </TouchableWithoutFeedback>
+                        )} />
+                </View>
+            </ScrollView>
+        )
+    }
+}
+
+const style = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: '#f2f3f8'
+    },
+    section: {
+        backgroundColor: 'white',
+        padding: 10
+    },
+    sectionHeader: {
+        alignItems: 'center',
+        flexDirection: 'row',
+        justifyContent: 'space-between'
+    },
+    sectionSubHeader: {
+        alignItems: 'center',
+        flexDirection: 'row'
+    },
+    sectionTitle: {
+        fontSize: 20,
+        color: '#000',
+        fontWeight: '600',
+        marginLeft: 5
+    },
+    sectionDivision: {
+        flexDirection: 'row',
+        backgroundColor: '#fff',
+        alignItems: 'center',
+        borderRadius: 7
+    },
+    sectionDivisionImage: {
+        flex: 3,
+        width: '100%',
+        minHeight: 100
+    },
+    sectionDivisionTitle: {
+        fontFamily: 'Quicksand-Medium',
+        fontSize: 15,
+        color: '#000',
+    },
+    sectionDivisionGenre: {
+        fontFamily: 'Quicksand-Medium',
+        fontSize: 12,
+        color: '#6c757d',
+        marginBottom: 10
+    },
+    sectionDivisionButton: {
+        flex: 2,
+        borderRadius: 50,
+        borderColor: '#007bff',
+        borderWidth: 2,
+        alignItems: 'center',
+        justifyContent: 'center'
+    }
+})
+
+export default Home_Page;
